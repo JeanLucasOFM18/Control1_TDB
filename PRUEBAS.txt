@@ -54,14 +54,19 @@ CREATE TABLE peluquero (
 
 CREATE TABLE cita (
 	id_cita SERIAL PRIMARY KEY,
-	hora VARCHAR(10),
+	id_horario INT REFERENCES horarios(id_horario),
 	id_peluqueria INT REFERENCES peluqueria(id_peluqueria),
 	id_cliente INT REFERENCES cliente(id_cliente),
 	id_peluquero INT REFERENCES peluquero(id_peluquero),
 	id_detalle INT REFERENCES detalle(id_detalle)
 );
 
+
 CREATE TABLE horarios (
+	id_horario SERIAL PRIMARY KEY,
+	hora VARCHAR(10),
+	mes VARCHAR (12),
+	año VARCHAR(4)
 );
 
 CREATE TABLE producto (
@@ -134,19 +139,35 @@ VALUES
     ('Francisco', 'Navarro', 'francisconavarro@hotmail.com', '+56944444444'),
     ('Carolina', 'Sandoval', 'carolinasandoval@gmail.com', '+56933333333');
 	
-INSERT INTO cita (hora, id_peluqueria, id_cliente, id_peluquero, id_detalle) VALUES 
-    ('09:00:00', 1, 5, 2, 4),
-    ('10:00:00', 1, 6, 1, 3),
-    ('11:00:00', 3, 1, 3, 4),
-    ('12:00:00', 4, 2, 5, 3),
-    ('13:00:00', 2, 10, 6, 1),
-    ('09:00:00', 1, 9, 1, 1),
-    ('10:00:00', 2, 14, 6, 3),
-    ('11:00:00', 3, 4, 4, 2),
-    ('12:00:00', 4, 3, 7, 4),
-    ('13:00:00', 2, 13, 8, 1),
-	('15:00:00', 4, 8, 5, 3),
-	('16:00:00', 3, 15, 3, 1);
+INSERT INTO cita (id_horario, id_peluqueria, id_cliente, id_peluquero, id_detalle) VALUES 
+    (1, 1, 5, 2, 4),
+    (1, 1, 6, 1, 3),
+    (2, 1, 9, 1, 1),
+    (3, 2, 10, 6, 1),
+    (4, 2, 14, 6, 3),
+    (2, 2, 13, 8, 1),
+    (4, 3, 1, 3, 4),
+    (5, 3, 4, 4, 2),
+    (6, 3, 15, 3, 1),
+    (6, 4, 2, 5, 3), 
+    (7, 4, 3, 7, 4),
+    (6, 4, 8, 5, 3);
+	
+
+INSERT INTO horarios (hora, mes, año) VALUES 
+    ('09:00:00', 'Marzo', '2023'),
+    ('10:00:00', 'Marzo', '2023'),
+    ('11:00:00', 'Marzo', '2023'),
+    ('12:00:00', 'Marzo', '2023'),
+    ('13:00:00', 'Marzo', '2023'),
+    ('09:00:00', 'Abril', '2023'),
+    ('10:00:00', 'Abril', '2023'),
+    ('11:00:00', 'Abril', '2023'),
+    ('12:00:00', 'Abril', '2023'),
+    ('13:00:00', 'Abril', '2023'),
+    ('15:00:00', 'Abril', '2023'),
+    ('16:00:00', 'Abril', '2023');
+
 
 INSERT INTO detalle (nombre, precio)
 VALUES
@@ -155,6 +176,40 @@ VALUES
 	('corte pelo y barba', '10000'),
 	('corte flequillo', '10000'),
 	('diseño en pelo hombre', '9000');
+
+--1.horario con menos citas durante el día por peluquería, identificando la comuna
+WITH horarios_cita as (SELECT h.id_horario, p.id_peluqueria, COUNT(c.id_horario) as cantidad_citas
+FROM cita c, horarios h, peluqueria p
+WHERE p.id_peluqueria = c.id_peluqueria AND 
+	c.id_horario = h.id_horario
+GROUP BY h.id_horario, p.id_peluqueria),
+
+menos_citas as (SELECT h.id_peluqueria, MIN(h.cantidad) as menor_cantidad
+FROM horarios_cita h
+GROUP BY h.id_peluqueria)
+
+SELECT h.id_horario, h.id_peluqueria, h.cantidad_citas, co.nombre
+FROM horarios_cita h, menos_citas m, comuna co, peluqueria p
+WHERE co.id_comuna = p.id_comuna AND p.id_peluqueria = h.id_peluqueria
+AND h.id_peluqueria = m.id_peluqueria AND h.cantidad_citas = m.menor_cantidad
+
+
+--10.identificar lista de totales por comuna, cantidad de peluquerías, cantidad de clientes residentes en la comuna
+WITH peluquerias as (SELECT c.id_comuna, COUNT(*)as n_peluquerias
+FROM comuna c, peluqueria p
+WHERE c.id_comuna = p.id_comuna
+GROUP BY c.id_comuna), 
+clientes as 
+(SELECT c.id_comuna, COUNT(*) as n_clientes
+FROM comuna c, cliente cl
+WHERE c.id_comuna = cl.id_comuna
+GROUP BY c.id_comuna)
+
+SELECT c.id_comuna, c.nombre, p.n_peluquerias, cl.n_clientes
+FROM comuna c, peluquerias p, clientes cl
+WHERE c.id_comuna = p.id_comuna AND c.id_comuna = cl.id_comuna
+
+
 
 --LISTADO DE HOMBRES QUE SE CORTARON PELO Y BARBA (NOMBRE Y APELLIDO)
 SELECT cl.nombre, cl.apellido
