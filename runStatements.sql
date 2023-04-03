@@ -1,3 +1,13 @@
+SELECT * FROM comuna;
+SELECT * FROM peluqueria;
+SELECT * FROM cliente;
+SELECT * FROM detalle;
+SELECT * FROM cita;
+SELECT * FROM peluquero;
+SELECT * FROM sueldo;
+
+
+-- 1
 WITH horarios_cita as (SELECT c.dia, c.mes, c.anio, c.id_peluqueria, COUNT(*) as cantidad_citas
 FROM cita c
 GROUP BY c.dia, c.mes, c.anio, c.id_peluqueria),
