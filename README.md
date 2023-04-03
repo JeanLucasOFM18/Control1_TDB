@@ -25,9 +25,9 @@ psql -U nombre_usuario -f dbCreate.sql
 
 -- 2 SCRIPT
 -- Para conectarse a la BBDD
-psql -U nombre_de_usuario -d nombre_de_la_base_de_datos
+psql -U nombre_de_usuario -d control1_g3
 -- Para crear tablas y llenarlas
-\i nombre_del_archivo.sql
+\i loadData.sql
 
 -- 3 SCRIPT
 -- Para cargar las sentencias

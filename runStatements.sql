@@ -1,6 +1,3 @@
--- SENTENCIAS SQL REQUERIDAS --
-
--- 1
 WITH horarios_cita as (SELECT c.dia, c.mes, c.anio, c.id_peluqueria, COUNT(*) as cantidad_citas
 FROM cita c
 GROUP BY c.dia, c.mes, c.anio, c.id_peluqueria),
@@ -13,7 +10,7 @@ SELECT h.dia, h.mes, h.anio, h.id_peluqueria, h.cantidad_citas, co.nombre
 FROM horarios_cita h, menos_citas m, comuna co, peluqueria p
 WHERE co.id_comuna = p.id_comuna AND p.id_peluqueria = h.id_peluqueria
 AND h.id_peluqueria = m.id_peluqueria AND h.cantidad_citas = m.menor_cantidad
-ORDER BY h.id_peluqueria ASC
+ORDER BY h.id_peluqueria ASC;
 
 -- 2
 WITH
@@ -95,7 +92,7 @@ SELECT c.nombre, p.nombre, ci.mes, MAX(ci.duracion_cita) AS duracion_maxima
 	FROM cliente c
 	JOIN cita ci ON c.id_cliente = ci.id_cliente
 	JOIN peluqueria p ON ci.id_peluqueria = p.id_peluqueria
-	GROUP BY c.id_cliente, p.id_peluqueria, ci.mes
+	GROUP BY c.id_cliente, p.id_peluqueria, ci.mes;
 
 -- 8
 
@@ -145,4 +142,4 @@ GROUP BY c.id_comuna)
 
 SELECT c.id_comuna, c.nombre, p.n_peluquerias, cl.n_clientes
 FROM comuna c, peluquerias p, clientes cl
-WHERE c.id_comuna = p.id_comuna AND c.id_comuna = cl.id_comuna
+WHERE c.id_comuna = p.id_comuna AND c.id_comuna = cl.id_comuna;
