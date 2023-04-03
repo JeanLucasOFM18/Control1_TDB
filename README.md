@@ -18,6 +18,7 @@ Diccionario de datos
 7.- Tabla “cita”: Tabla que contiene las citas de la BD con los datos más importantes de esta. id_cita (serial): Variable de tipo serial que se autogenera para dar un identificador único a cada cita. dia (varchar): Cadena de caracteres con el día de la cita. hora (varchar): Cadena de caracteres con la hora de la cita. duracion_cita (int): Valor numérico con la duración de la cita. anio (int): Valor numérico con el año de la cita. mes (varchar): Cadena de caracteres con el mes de la cita. id_cliente (int): Referencia a la tabla cliente con el id del cliente que participará en la cita. id_peluquero (int): Referencia a la tabla peluquero con el id del peluquero que atiende a la cita generada id_detalle (int): Referencia a la tabla detalle con el id del detalle que posee el servicio a realizar en la cita. id_peluqueria (int): Referencia a la tabla peluquería con el id de la peluquería donde se realiza la cita.
 
 Comandos Script
+--IMPORTANTE: Agregar el directorio de postgres a la variable de entorno path.
 
 -- 1 SCRIPT
 -- Para crear la BBDD
